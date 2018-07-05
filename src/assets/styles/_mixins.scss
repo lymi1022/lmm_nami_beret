@@ -1,0 +1,17 @@
+@mixin env($name) {
+  @if $env-name == $name {
+    @content;
+  }
+}
+
+@mixin env_yiye {
+  @include env('yiye') {
+    @content;
+  }
+}
+
+@mixin env_nami {
+  @include env('nami'){
+    @content;
+  }
+}

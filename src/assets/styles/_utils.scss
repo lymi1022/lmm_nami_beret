@@ -1,0 +1,6 @@
+// 涉及 rem 的计算都以 15px 跟节点字体大小为基准
+$root-font-size: 15;
+
+@function to-rem($px){
+  @return ($px / $root-font-size) + rem;
+}

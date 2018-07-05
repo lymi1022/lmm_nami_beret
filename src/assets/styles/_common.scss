@@ -1,0 +1,148 @@
+.clearfix {
+  &:after {
+    content: " ";
+    clear: both;
+    display: table;
+  }
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.block {
+  display: block;
+}
+
+.invisible-text {
+  * {
+    color: transparent;
+    user-select: none;
+    opacity: 0;
+  }
+}
+
+.transparent-mask {
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  position: fixed;
+  left: 0;
+  top: 0
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.center {
+  text-align: center;
+}
+
+.blue-link {
+  color: $primary-color-2;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.arrow-down-icon {
+  font-family: "iconfont" !important;
+  font-style: normal;
+  font-size: 16px;
+  &:before {
+    content: "\e689";
+    color: $blue;
+  }
+}
+
+.arrow-up-icon {
+  @extend .arrow-down-icon;
+  &:before {
+    content: "\e930";
+  }
+}
+
+.arrow-right-icon {
+  font-family: "iconfont" !important;
+  font-style: normal;
+  font-size: 16px;
+  color: red;
+  &:before {
+    content: "\e932";
+    color: $blue;
+  }
+}
+
+.arrow-down-icon--small {
+  @extend .arrow-down-icon;
+  font-size: 12px;
+}
+
+.arrow-up-icon--small {
+  @extend .arrow-up-icon;
+  font-size: 12px;
+}
+
+.unread-badge {
+  background: #ff5f01;
+  color: #fff;
+  border-radius: 16px;
+  padding: 0px 5px;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  font-size: 12px;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.vertical-line {
+  color: #ccc;
+  float: left;
+  padding: 0px 15px;
+  line-height: 30px;
+}
+
+.vertical-line-tool {
+  color: #ccc;
+  float: left;
+  padding: 0px 2px;
+  line-height: 32px;
+}
+
+.color-gray {
+  color: #ccc;
+}
+
+.scroll-container::-webkit-scrollbar {
+  width: 6px;
+  height: 16px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  border-radius: 58px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  height: 20px;
+  border-radius: 50px;
+  background-color: rgba(151,168,190,.3);
+}
+.container-title {
+  @include env_yiye {
+    color: #333333;
+    font-size: 14px;
+    padding: 15px 0 15px 30px;
+  }
+}
