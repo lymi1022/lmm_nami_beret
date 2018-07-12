@@ -1,9 +1,7 @@
-.clearfix {
-  &:after {
-    content: " ";
-    clear: both;
-    display: table;
-  }
+.clearfix:after {
+  content: " ";
+  clear: both;
+  display: table;
 }
 
 .center {
@@ -16,12 +14,10 @@
   display: block;
 }
 
-.invisible-text {
-  * {
-    color: transparent;
-    user-select: none;
-    opacity: 0;
-  }
+.invisible-text * {
+  color: transparent;
+  user-select: none;
+  opacity: 0;
 }
 
 .transparent-mask {
@@ -30,7 +26,7 @@
   z-index: 9999;
   position: fixed;
   left: 0;
-  top: 0
+  top: 0;
 }
 
 .pointer {
@@ -50,26 +46,24 @@
 }
 
 .blue-link {
-  color: $primary-color-2;
+  color: blue;
   text-decoration: none;
   cursor: pointer;
 }
 
-.arrow-down-icon {
+.arrow-down-icon, .arrow-up-icon, .arrow-up-icon--small, .arrow-down-icon--small {
   font-family: "iconfont" !important;
   font-style: normal;
   font-size: 16px;
-  &:before {
-    content: "\e689";
-    color: $blue;
-  }
 }
 
-.arrow-up-icon {
-  @extend .arrow-down-icon;
-  &:before {
-    content: "\e930";
-  }
+.arrow-down-icon:before, .arrow-up-icon:before, .arrow-up-icon--small:before, .arrow-down-icon--small:before {
+  content: "\e689";
+  color: blue;
+}
+
+.arrow-up-icon:before, .arrow-up-icon--small:before {
+  content: "\e930";
 }
 
 .arrow-right-icon {
@@ -77,19 +71,18 @@
   font-style: normal;
   font-size: 16px;
   color: red;
-  &:before {
-    content: "\e932";
-    color: $blue;
-  }
+}
+
+.arrow-right-icon:before {
+  content: "\e932";
+  color: blue;
 }
 
 .arrow-down-icon--small {
-  @extend .arrow-down-icon;
   font-size: 12px;
 }
 
 .arrow-up-icon--small {
-  @extend .arrow-up-icon;
   font-size: 12px;
 }
 
@@ -137,12 +130,5 @@
 .scroll-container::-webkit-scrollbar-thumb {
   height: 20px;
   border-radius: 50px;
-  background-color: rgba(151,168,190,.3);
-}
-.container-title {
-  @include env_yiye {
-    color: #333333;
-    font-size: 14px;
-    padding: 15px 0 15px 30px;
-  }
+  background-color: rgba(151, 168, 190, 0.3);
 }

@@ -65,15 +65,15 @@
     </div>
     <div class="body">
       <div class="login-line">
-        <el-input class="username" v-model="username" @blur="usernameBlur" placeholder="用户名"></el-input>
+        <el-input class="username" v-model="username" @input="usernameValidate" placeholder="用户名"></el-input>
         <div class="err">{{usernameErrMsg}}</div>
       </div>
       <div class="login-line">
-        <el-input class="password" v-model="password" @blur="passwordBlur" placeholder="密码"></el-input>
+        <el-input class="password" v-model="password" @input="passwordValidate" placeholder="密码"></el-input>
         <div class="err">{{passwordErrMsg}}</div>
       </div>
       <div class="login-captcha">
-        <el-input type="hidden" v-model="luotestResponse" class="hide"></el-input>
+        <!-- <el-input type="hidden" v-model="luotestResponse" class="hide"></el-input> -->
         <div class="l-captcha" data-site-key="54fb2db08556751b513acb9732f656ef" data-width="310px" data-callback="getResponse"></div>
         <div class="err">{{luotestResponseErrMsg}}</div>
       </div>
@@ -86,34 +86,14 @@
 <script>
 import $ from 'jquery'
 import yiyeLogo from '@/assets/iconfont/yiye-ai.svg'
-const validatorusername = (v, vm) => {
-  if (!v) {
-    vm.usernameErrMsg = '请输入用户名'
-  } else {
-    vm.usernameErrMsg = ''
-  }
-}
-const validatorPassword = (v, vm) => {
-  if (!v) {
-    vm.passwordErrMsg = '请输入密码'
-  } else {
-    vm.passwordErrMsg = ''
-  }
-}
-const validatorluotestResponse = (v, vm) => {
-  if (!v) {
-    vm.luotestResponseErrMsg = '请选择校验码'
-  } else {
-    vm.luotestResponseErrMsg = ''
-  }
-}
+import { mapActions } from 'vuex'
+// import api from '@/helpers/call_api'
 export default {
   data() {
     return {
-      username: '',
-      password: '',
+      username: 'admin@6ceng.com',
+      password: '111111',
       yiyeLogo,
-      luotestResponse: '',
       usernameErrMsg: '',
       passwordErrMsg: '',
       luotestResponseErrMsg: ''
@@ -122,12 +102,7 @@ export default {
   created() {
     const luosimao = `<script id="luosimao-script" src="https://captcha.luosimao.com/static/dist/api.js" type="text/javascript"><\/script>`
     $('body').append(luosimao)
-  },
-  watch: {
-    luotestResponse(v) {
-      let vm = this
-      validatorPassword(this.luotestResponse, vm)
-    }
+    window.getResponse = this.successResponse
   },
   destroyed() {
     $('#luosimao-script').remove()
@@ -136,33 +111,46 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      fillLogin: 'fillLogin'
+    }),
+    successResponse(...args) {
+      this.luotestResponse = args[0]
+    },
     submitForm() {
-      // 用来判断校验是否成功
-      const aInput = document.getElementsByTagName('input')
-      for (let i = 0; i < aInput.length; i++) {
-        if (aInput[i].name === 'luotest_response') {
-          this.luotestResponse = aInput[i].value
-        }
+      let storage = window.localStorage
+      if (!this.usernameValidate() || !this.passwordValidate() || !this.luotestResponse) {
+        return false
       }
-      this.validators()
+      const formData = {
+        username: this.username,
+        password: this.password,
+        loutest_response: this.luotestResponse,
+        remember: ''
+      }
+      this.fillLogin({formData}).then(res => {
+        storage['jwtToken'] = res.jwtToken
+        this.$router.push({
+          name: 'overview'
+        })
+      })
     },
-    validators() {
-      const vm = this
-      validatorusername(this.username, vm)
-      validatorPassword(this.password, vm)
-      validatorluotestResponse(this.luotestResponse, vm)
+    usernameValidate() {
+      if (!this.username.trim()) {
+          this.usernameErrMsg = '请输入用户名'
+          return false
+        }
+        this.usernameErrMsg = ''
+        return true
     },
-    usernameBlur() {
-      const vm = this
-      validatorusername(this.username, vm)
-    },
-    passwordBlur() {
-      const vm = this
-      validatorPassword(this.password, vm)
+    passwordValidate() {
+      if (!this.password.trim()) {
+        this.passwordErrMsg = '请输入密码'
+        return false
+      }
+      this.passwordErrMsg = ''
+      return true
     }
-    // getResponse() {
-    //   console.log(2)
-    // }
   }
 }
 </script>

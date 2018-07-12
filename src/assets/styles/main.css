@@ -1,0 +1,27 @@
+#app {
+  margin-top: 0!important;
+}
+.el-button--cute {
+  background: #F4F8FD;
+  padding: 5px 6px;
+  border-radius: 3px;
+  color: #6a7398;;
+  height: auto;
+  border-color: #EAEEF9;
+  font-size: 12px;
+  font-weight: 400;
+}
+.el-button--cute:focus {
+  color: #6a7398;;
+  border-color: #EAEEF9;
+}
+.el-button--cute:hover {
+  color: #6a7398;;
+  border-color: #EAEEF9;
+}
+.blue-link {
+  color: #6a7398;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 12px;
+}
