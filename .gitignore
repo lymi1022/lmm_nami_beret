@@ -15,3 +15,12 @@ selenium-debug.log
 *.ntvs*
 *.njsproj
 *.sln
+api/__pycache__/
+._*
+*tmp
+.vscode/
+debug.log
+.idea
+.yarnTest
+package-lock.json
+.cache
