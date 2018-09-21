@@ -76,15 +76,6 @@ export default {
     handleItemClick(id) {
       this.setActiveWidget({id})
     },
-    handleChange1(e) {
-      if (e.added) {
-        console.log(e.added.element);
-      }
-      if (e.moved) {
-        console.log(e.moved.element);
-        // this.setActiveWidget(e.moved.element.id)
-      }
-    },
     handleChange(e) {
       if (e.added) {
         this.addWidget({

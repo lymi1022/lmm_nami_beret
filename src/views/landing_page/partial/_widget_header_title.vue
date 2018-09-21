@@ -1,7 +1,7 @@
 <template>
-  <div :style="widgetWrapStyle">
-      <div :style="widgetTitleStyle">{{widget.model.title || '标题'}}</div>
-      <div :style="widgetSubTitleStyle">{{widget.model.subTitle || '副标题'}}</div>
+  <div class="widget--head-title" :style="widgetWrapStyle">
+      <h1 class="title" :style="widgetTitleStyle">{{widget.model.title || '标题'}}</H1>
+      <div class="sub-title" :style="widgetSubTitleStyle">{{widget.model.subTitle || '副标题'}}</div>
   </div>
 </template>
 <script>
@@ -31,3 +31,19 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.widget--head-title {
+  padding: 2rem 1.33rem;
+  text-align: center;
+  .title {
+    font-weight: normal;
+    font-size: 2.33rem;
+    margin: 0;
+    margin-bottom: 0.667rem;
+  }
+  .sub-title {
+    color: #666;
+    font-size: 1.1rem;
+  }
+}
+</style>

@@ -9,7 +9,13 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: () => import('@/views/login')
-    }, {
+    },
+    {
+      path: '/menu',
+      name: 'menu',
+      component: () => import('@/views/menu/index'),
+    },
+     {
       path: '/',
       component: () => import('@/views/home'),
       children: [

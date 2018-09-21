@@ -46,7 +46,12 @@ module.exports = {
   build: {
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),
-
+    vendor: ['vue2-toast'],
+    extend (config, ctx) {
+      if (ctx.isClient) {
+        config.resolve.alias['vue'] = 'vue/dist/vue.js';
+      }
+    },
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',

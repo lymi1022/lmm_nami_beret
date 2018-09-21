@@ -8,19 +8,21 @@ const vm = new Vue()
 const API_ROOT = getAPIRoot()
 const callApi = (url, config = {}) => {
   const uri = (url.indexOf('http://') === 0 || url.indexOf('https://') === 0) ? url : API_ROOT + url
-  const data = config && config.data && qs.stringify(config.data)
+  const data = config && config.data && (config.useJson ? config.data : qs.stringify(config.data))
     // 发送 POST 请求
     const _config = {
     method: 'get',
+    showError: true,
     url: uri,
     ...config,
     headers: {
       'Authorization': getToken(),
-      'content-type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/x-www-form-urlencoded',
       ...config.headers
     },
     data,
   }
+  const { showError } = config
   const promise = axios(_config).then(result => {
     const body = result.data
     if (result.status === 200) {
@@ -41,7 +43,7 @@ const callApi = (url, config = {}) => {
       return Promise.reject(body)
     }).catch(err => {
       const errList = (!_.isEmpty(err.errors) ? err.errors : [err])
-      if (errList[0].code !== 1000 && errList[0].code !== 1002) {
+      if (showError && errList[0].code !== 1000 && errList[0].code !== 1002) {
         vm.$message({
           message: _.get(errList, '[0].message') || '发送未知 API 错误！',
           type: 'error'

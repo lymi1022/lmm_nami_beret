@@ -18,7 +18,11 @@
           <right-side></right-side>
         </div>
         <div class="dynamic-fixed-position">
-          <div class="footer">323</div>
+          <div class="footer">
+            <el-button type="primary">发布</el-button>
+            <el-button @click="handlePreviewClick">预览</el-button>
+            <el-button @click="handleSaveClick">保存</el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -31,12 +35,17 @@ import BuilderContent from '../partial/_builder_content'
 import RightSide from '../partial/_right_side'
 import parseJSON from '@/utils/parse_json'
 import { mapActions } from 'vuex'
+import { structWidgets } from '../utils'
+import { mapState } from 'vuex'
+import beforeLeaver from '@/helpers/before_leaver'
 
 export default {
+  mixins: [beforeLeaver],
   data() {
     return {
       contentWidgets,
-      pageInfo: {}
+      pageInfo: {},
+      saved: {}
     }
   },
   components: {
@@ -48,24 +57,84 @@ export default {
     this.init()
   },
   computed: {
+    ...mapState('landingPage', {
+      widgets: 'widgets',
+    }),
     pageName() {
       return this.pageInfo.name
     }
   },
   methods: {
     ...mapActions('landingPage', {
-      updateBuilderContent: 'updateBuilderContent'
+      updateBuilderContent: 'updateBuilderContent',
+      validateWidgets: 'validateWidgets'
     }),
+    isSaved() {
+      return JSON.stringify(this.structPageData()) === JSON.stringify(this.saved)
+    },
     init() {
       this.pageId = this.$route.params.id
       api.getLandingPage(this.pageId).then(data => {
         this.pageInfo = data.landingPage
         const widgets = (data.landingPage && parseJSON(data.landingPage.content || [])) || []
         this.updateBuilderContent(widgets)
+        this.saved = this.structPageData()
       })
     },
     handleSideMenuToggleClick() {
       console.log(1);
+    },
+    getWidgets(includeFields = false) {
+      const more = includeFields ? ['fields'] : []
+      return structWidgets(this.widgets, more)
+    },
+    structPageData() {
+      const widgets = this.getWidgets()
+      const data = {
+        ...widgets
+      }
+      return data
+    },
+    handleSaveClick() {
+      return this.validateWidgets()
+        .then(res => {
+          // console.log(res);
+        })
+        .catch(errs => {
+          // console.log(errs);
+        })
+    },
+    getWidgets(includeFields = false) {
+      const more = includeFields ? ['fields'] : []
+      return structWidgets(this.widgets, more)
+    },
+    genPreviewData() {
+      return Promise.all(this.getWidgets(true).map(widget => {
+        return widget
+      })).then(widgets => {
+        const data = widgets.map(widget => {
+          return {
+            ...widget,
+            isLandingPage: true
+          }
+        })
+        localStorage.setItem('previewData', JSON.stringify({
+          widgets: data
+        }))
+      })
+
+    },
+    handlePreviewClick() {
+      return this.validateWidgets()
+        .then(() => {
+          this.genPreviewData()
+            .then(() => {
+              setTimeout(() => {
+                  window.open('/preview.html')
+              }, 400);
+            })
+            .catch(console.error)
+        })
     }
   }
 }
@@ -94,7 +163,7 @@ export default {
       top: 0;
       bottom: 70px;
       left: 0;
-      width: 355px;
+      width: 300px;
       overflow-x: hidden;
       overflow-y: auto;
       border-right: 1px solid #eaeef9;
@@ -104,8 +173,8 @@ export default {
       top: 23px;
       bottom: 70px;
       left: 50%;
-      width: 500px;
-      margin-left: -240px;
+      width: 490px;
+      margin-left: -270px;
       border: 1px solid #ccc;
       overflow-y: auto;
       overflow-x: hidden;

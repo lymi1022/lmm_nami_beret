@@ -21,9 +21,46 @@
       </div>
     </div>
     <div class="table-container">
-      <super-list :config="config" v-model="queryParams" @edit="handleEditLp" @data="handleData">
+      <super-list 
+          ref="splist"
+          :config="config" 
+          v-model="queryParams" 
+          @edit="handleEditLp" 
+          @data="handleData"
+          @cell-mouse-enter="handleMouseEnter"
+          @refetched="refetched"
+          @cell-mouse-leave="handleMouseLeave">
         <template slot="col-name" slot-scope="scope">
-          <div>{{scope.row.name}}</div>
+          <!-- <div v-if="!edit[scope.row.eid]">{{scope.row.name}}
+            <span v-if="currentId === scope.row.eid" @click="handleEditIcon(scope.row)">
+              <i class="iconfont icon-edit"></i>
+            </span>
+          </div>
+          <div v-else>
+            <el-row>
+              <el-col :span="18">
+                <el-input v-model="inputEditVal"></el-input>
+              </el-col>
+              <el-col :span="6">
+                <span class="icon icon-a" @click="handleConfirm(scope.row)">
+                  <i class="el-icon-circle-check"></i>
+                </span>
+                <span class="icon icon-b" @click="handleCancel(scope.row)">
+                  <i class="el-icon-circle-close"></i>
+                </span>
+              </el-col>
+            </el-row>
+          </div> -->
+          <div class="line-edit">
+            <editable-input
+            :value="scope.row.name"
+            :width="lineWidth"
+            @input="handleInput(scope.row, $event)"
+            @update:editing="handleEditIconClick(scope.row, $event)"
+            :isEditing="editingGroupId === scope.row.eid"
+            :showEditIcon="currentId === scope.row.eid"
+          ></editable-input>
+          </div>
         </template>
         <template slot="col-group-name" slot-scope="scope">
           <div>{{scope.row.landingPageFolderName || '未分组'}}</div>
@@ -41,13 +78,22 @@
 <script>
 import * as api from '../api.js'
 import SuperList from '@/components/super_list'
+import submitWithVersionCheck from '@/helpers/submit_with_version_check'
+import { observeDom } from '@/helpers/mutation_observer'
+import EditableInput from '@/components/editable_input'
+import $ from 'jquery'
 export default {
   components: {
-    SuperList
+    SuperList,
+    EditableInput
   },
   data() {
     return {
       group: [],
+      inputEditVal: '',
+      edit: {},
+      lpList: [],
+      currentId: -1,
       queryParams: {},
       config: {
         restAPIUrl: `landing_pages`,
@@ -104,21 +150,102 @@ export default {
             eventKey: 'viewURL',
           }
         ]
-      }
+      },
+      observeTarget: {},
+      editingGroupId: null,
+      lineWidth: null,
     }
-  },  
+  },
   created() {
     api.getGroupAllList().then(res => {
       this.group = res
     })
   },
+  mounted() {
+    this.observeTarget = this.$refs.splist.$el
+    this.initObserver()
+    window.addEventListener('resize', this.updateLineWidth)
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.updateLineWidth)
+  },
   methods: {
+    handleEditIconClick(row, v) {
+      if (v) {
+        this.editingGroupId = row.eid
+      } else {
+        this.editingGroupId = null
+      }
+    },
+    handleInput(row, v) {
+      let data = {
+        name: v,
+        version: row.version,
+      }
+      api.lpRename(row.eid, data, false).then(res => {
+        this.editingGroupId = null
+        this.$refs.splist.refetch()
+      })
+    },
+    initObserver() {
+      if (this.observer) {
+        this.observer.disconnect()
+      }
+      const observer = observeDom(this.observeTarget, () => {
+        this.updateLineWidth()
+      })
+      this.observer = observer
+    },
+    updateLineWidth() {
+      this.lineWidth = this.lpList.length > 0 && $('.line-edit')[0].clientWidth
+    },
     handleGroupItem(eid) {
       if (eid === '') {
         // this.params = {
         //   searchValkue = ''
         // }
       }
+    },
+    editInit() {
+      this.edit = _.reduce(this.lpList, (obj, row) => {
+        return {
+          ...obj,
+          [row.eid]: false
+        }
+      })
+    },
+    refetched(rows) {
+      this.lpList = rows
+      this.editInit()
+    },
+    handleEditIcon(row) {
+      this.editInit()
+      this.edit[row.eid] = true
+      this.inputEditVal = row.name
+    },
+    handleConfirm(row) {
+      const fn = () => {
+        let data = {
+          name: this.inputEditVal,
+          version: row.version,
+        }
+        return api.lpRename(row.eid, data, false)
+      }
+      const updateVersionNumber = version => { row.version = version }
+      submitWithVersionCheck(this, fn, updateVersionNumber, '重命名成功')
+        .then(() => {
+          this.$refs.splist.refetch()
+        })
+        .catch(() => {})
+    },
+    handleCancel(row) {
+      this.edit[row.eid] = false
+    },
+    handleMouseEnter(row, column, cell, event) {
+      this.currentId = row.eid
+    },
+    handleMouseLeave(row, column, cell, event) {
+      this.currentId = -1
     },
     handleEditLp(row) {
       this.$router.push({
@@ -165,6 +292,12 @@ export default {
     margin-left: 4px;
     font-size: 12px;
   } 
+  .icon-a {
+    color: blue;
+  }
+  .icon-b {
+    color: #C1C1C1;
+  }
 }
 </style>
 

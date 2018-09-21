@@ -20,7 +20,7 @@ const actions = {
         try {
           setLocalAuth(user)
         } catch (error) {
-          console.log(error)
+          // console.log(error)
         }
         commit(types.UPDATE_USER, user)
         return user

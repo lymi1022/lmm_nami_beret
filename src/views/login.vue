@@ -91,7 +91,7 @@ import { mapActions } from 'vuex'
 export default {
   data() {
     return {
-      username: 'admin@6ceng.com',
+      username: 'cesck@cs.com',
       password: '111111',
       yiyeLogo,
       usernameErrMsg: '',
@@ -119,9 +119,9 @@ export default {
     },
     submitForm() {
       let storage = window.localStorage
-      if (!this.usernameValidate() || !this.passwordValidate() || !this.luotestResponse) {
-        return false
-      }
+      // if (!this.usernameValidate() || !this.passwordValidate() || !this.luotestResponse) {
+      //   return false
+      // }
       const formData = {
         username: this.username,
         password: this.password,

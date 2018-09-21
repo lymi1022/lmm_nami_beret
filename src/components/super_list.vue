@@ -4,6 +4,8 @@
     style="width: 100%"
     v-loading="isLoading"
     element-loading-text="数据加载中..."
+    @cell-mouse-enter="handleMouseEnter"
+    @cell-mouse-leave="handleMouseLeave"
     >
     <template v-for="(prop, index) in keys">
        <el-table-column
@@ -76,7 +78,6 @@ export default {
   },
   created() {
     if (this.configWithDefaults.fetchOnCreated) {
-      console.log('red');
       this.refetch()
     }
   },
@@ -128,7 +129,6 @@ export default {
     },
     fetchItems(params) {
       this.isLoading = true
-      console.log(this.configWithDefaults.restAPIUrl, 9);
       return callApi(this.configWithDefaults.restAPIUrl, {
         method: 'get',
         params
@@ -145,6 +145,12 @@ export default {
         return btn.show(row)
       }
       return true
+    },
+    handleMouseEnter(row, column, cell, event) {
+      this.$emit('cell-mouse-enter', row, column, cell, event)
+    },
+    handleMouseLeave(row, column, cell, event) {
+      this.$emit('cell-mouse-leave', row, column, cell, event)
     },
   }
 }

@@ -9,6 +9,9 @@ import '@/public/font_icon/iconfont.css'
 import '@/assets/styles/normalize.css'
 import '@/assets/styles/main.css'
 import store from './store'
+import 'vue2-toast/lib/toast.css';
+import Toast from 'vue2-toast';
+Vue.use(Toast);
                                                                                                                       
 Vue.config.productionTip = false                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 Vue.use(ElementUI)

@@ -4,6 +4,13 @@ export function getGroupAllList() {
     method: 'get'
   })
 }
+export function lpRename(id, data, showError) {
+  return callApi(`landing_pages/${id}/rename`, {
+    method: 'post',
+    data,
+    showError: showError
+  })
+}
 
 
 //////////////////////////// page_builder ///////////////////////////

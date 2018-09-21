@@ -34,6 +34,7 @@
     top: 0;
     width: 100%;
     box-sizing: border-box;
+    min-width: 1000px;
   }
 }
 </style>

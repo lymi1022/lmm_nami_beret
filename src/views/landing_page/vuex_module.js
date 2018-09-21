@@ -2,6 +2,8 @@ import * as widgets from './widgets'
 const UPDATE_BUILDER_CONTENT = 'UPDATE_BUILDER_CONTENT'
 const SET_ACTIVE_WIDGET = 'SET_ACTIVE_WIDGET'
 const UPDATE_WIDGET = 'UPDATE_WIDGET'
+const UPDATE_WIDGET_ERRORS = 'UPDATE_WIDGET_ERRORS'
+
 
 const state = {
   widgets: [],
@@ -20,9 +22,35 @@ const actions = {
     const $builderContent = document.querySelector('.builder__content')
     $builderContent.scrollTop = $activeWidget.offsetTop
   },
+  validateWidgets({commit, state, dispatch}) {
+    const doValidate = (widgets) => {
+      return widgets
+        .map(widget => {
+          const validateResult = widget.validate && widget.validate()
+          return validateResult ? {
+            id: widget.id,
+            errors: validateResult
+          } : undefined
+        })
+        .filter(Boolean)
+    }
+    const generalValidateResults = doValidate(state.widgets)
+    const validateResults = generalValidateResults
+    state.widgets.forEach(widget => {
+      const erroredWidget = _.find(validateResults, {
+        id: widget.id
+      })
+      commit(UPDATE_WIDGET_ERRORS, {
+        id: widget.id,
+        errors: erroredWidget ? erroredWidget.errors : {}
+      })
+    })
+    if (validateResults.length === 0) {
+      return undefined
+    }
+    return Promise.reject(validateResults)
+  },
   addWidget({ commit, state }, {factory: Factory, index}) {
-    console.log(1);
-    console.log(index)
     const widget = new Factory()
     let widgets
     if (!_.isUndefined(index)) {
@@ -57,6 +85,14 @@ const mutations = {
   [SET_ACTIVE_WIDGET](state, { id }) {
     state.activeWidgetId = id
   },
+  [UPDATE_WIDGET_ERRORS](state, {id, errors}) {
+    state.widgets.forEach(widget => {
+      if (id === widget.id) {
+        widget.errors = errors
+      }
+    })
+  },
+
   [UPDATE_WIDGET](state, {id, model}) {
     state.widgets.forEach((widget, index) => {
       if (id === widget.id) {
